@@ -5,103 +5,130 @@ class AnalisadorLexico:
 
     def __init__(self, nomeArquivo):
         arquivo = LeitorDeArquivos(nomeArquivo)
+        buffer = []
     
-    def proximoToken(self):
-        while char = arquivo.leProximoChar != None:
-            c = str(char)
-            if(c == " " or c == "\n"):
-                continue
-        return
+    # def proximoToken(self):
+    #     while char = arquivo.leProximoChar != None:
+    #         c = str(char)
+    #         if(c == " " or c == "\n"):
+    #             continue
+    #     return
+    
+    def vai(self):
+        while c = arquivo.leProximoChar != -1:
+            if self.separador(c) or self.operador(c)
+                token = ''.join(self.buffer)
+                if token is not '':
+                    self.identificaToken(token)
+                self.buffer = []
+            else
+                self.buffer.append(c)
+    
+    def separador(self, char):
+        if str(TipoToken[char].value[1] == "separador"):
+            return True
+        return False
+    
+    def operador(self, char):
+        if str(TipoToken[char].value[1] == "operador"):
+            return True
+        return False
 
-    def identificaToken(self, token):
 
-        if token == "=":
-            return Token("OPRecebe", "=")
-        elif token == "--":
-            return Token("OPIgual", "==")
-        elif token == ">":
-            return Token("OPMaior", ">")
-        elif token == "++":
-            return Token("OPIncrementa", "++")
-        elif token == "&&":
-            return Token("OPAnd", "&&")
-        elif token == "<=":
-            return Token("OPMenorIgual", "<=")
-        elif token == "!":
-            return Token("OPNao", "!")
-        elif token == "-":
-            return Token("OPMenos", "-")
-        elif token == "--":
-            return Token("OPDecrementa", "--")
-        elif token == "+":
-            return Token("OPSoma", "+")
-        elif token == "+=":
-            return Token("OPSomaERecebe", "+=")
-        elif token == "*":
-            return Token("OPMultiplica", "*")
-        elif token == ",":
-            return Token("Virgula", ",")
-        elif token == ".":
-            return Token("Ponto", ".")
-        elif token == "[":
-            return Token("AbreColchete", "[")
-        elif token == "{":
-            return Token("AbreChave", "{")
-        elif token == "(":
-            return Token("AbreParentese", "(")
-        elif token == ")":
-            return Token("FechaParentese", ")")
-        elif token == "}":
-            return Token("FechaChave", "}")
-        elif token == "]":
-            return Token("FechaColchete", "]")
-        elif token == ";":
-            return Token("PontoEVirgula", ";")
-        elif token == "abstract":
-            return Token("PCAbstract", "abstract")
-        elif token == "boolean":
-            return Token("PCBoolean", "boolean")
-        elif token == "char":
-            return Token("PCChar", "char")
-        elif token == "class":
-            return Token("PCClass", "class")
-        elif token == "else":
-            return Token("PCElse", "else")
-        elif token == "extends":
-            return Token("PCExtends", "extends")
-        elif token == "false":
-            return Token("PCFalse", "false")
-        elif token == "import":
-            return Token("PCImport", "import")
-        elif token == "if":
-            return Token("PCIf", "if")
-        elif token == "instanceof"
-            return Token("PCInstanceOf", "instanceof")
-        elif token == "int":
-            return Token("PCInt", "int")
-        elif token == "new":
-            return Token("PCNew", "new")
-        elif token == "null":
-            return Token("PCNull", "null")
-        elif token == "package":
-            return Token("PCPackage", "package")
-        elif token == "private":
-            return Token("PCPrivate", "private")
-        elif token == "protected":
-            return Token("PCProtected", "protected")
-        elif token == "public":
-            return Token("PCPublic", "public")
-        elif token == "return":
-            return Token("PCReturn", "return")
-        elif token == "static":
-            return Token("PCStatic", "static")
-        elif token == "super":
-            return Token("PCSuper", "super")
-        elif token == "this":
-            return Token("PCThis", "this")
-        elif token == "true":
-            return Token("PCTrue", "true")
-        elif token == "void":
-            return Token("PCVoid", "void")
-        elif token == "while":
-            return Token("PCWhile", "while")
+    def identificaToken(self, cadeiaDeCaracteres):
+        tipo = str(TipoToken[cadeiaDeCaracteres].value[1])
+        if tipo == "operador":
+            if cadeiaDeCaracteres == "=":
+                return Token("OPRecebe", "=")
+            elif cadeiaDeCaracteres == "--":
+                return Token("OPIgual", "==")
+            elif cadeiaDeCaracteres == ">":
+                return Token("OPMaior", ">")
+            elif cadeiaDeCaracteres == "++":
+                return Token("OPIncrementa", "++")
+            elif cadeiaDeCaracteres == "&&":
+                return Token("OPAnd", "&&")
+            elif cadeiaDeCaracteres == "<=":
+                return Token("OPMenorIgual", "<=")
+            elif cadeiaDeCaracteres == "!":
+                return Token("OPNao", "!")
+            elif cadeiaDeCaracteres == "-":
+                return Token("OPMenos", "-")
+            elif cadeiaDeCaracteres == "--":
+                return Token("OPDecrementa", "--")
+            elif cadeiaDeCaracteres == "+":
+                return Token("OPSoma", "+")
+            elif cadeiaDeCaracteres == "+=":
+                return Token("OPSomaERecebe", "+=")
+            elif cadeiaDeCaracteres == "*":
+                return Token("OPMultiplica", "*")
+
+        elif tipo == "separador":
+            if cadeiaDeCaracteres == ",":
+                return Token("Virgula", ",")
+            elif cadeiaDeCaracteres == ".":
+                return Token("Ponto", ".")
+            elif cadeiaDeCaracteres == "[":
+                return Token("AbreColchete", "[")
+            elif cadeiaDeCaracteres == "{":
+                return Token("AbreChave", "{")
+            elif cadeiaDeCaracteres == "(":
+                return Token("AbreParentese", "(")
+            elif cadeiaDeCaracteres == ")":
+                return Token("FechaParentese", ")")
+            elif cadeiaDeCaracteres == "}":
+                return Token("FechaChave", "}")
+            elif cadeiaDeCaracteres == "]":
+                return Token("FechaColchete", "]")
+            elif cadeiaDeCaracteres == ";":
+                return Token("PontoEVirgula", ";")
+        
+        elif tipo == "reservada"
+            if cadeiaDeCaracteres == "abstract":
+                return Token("PCAbstract", "abstract")
+            elif cadeiaDeCaracteres == "boolean":
+                return Token("PCBoolean", "boolean")
+            elif cadeiaDeCaracteres == "char":
+                return Token("PCChar", "char")
+            elif cadeiaDeCaracteres == "class":
+                return Token("PCClass", "class")
+            elif cadeiaDeCaracteres == "else":
+                return Token("PCElse", "else")
+            elif cadeiaDeCaracteres == "extends":
+                return Token("PCExtends", "extends")
+            elif cadeiaDeCaracteres == "false":
+                return Token("PCFalse", "false")
+            elif cadeiaDeCaracteres == "import":
+                return Token("PCImport", "import")
+            elif cadeiaDeCaracteres == "if":
+                return Token("PCIf", "if")
+            elif cadeiaDeCaracteres == "instanceof"
+                return Token("PCInstanceOf", "instanceof")
+            elif cadeiaDeCaracteres == "int":
+                return Token("PCInt", "int")
+            elif cadeiaDeCaracteres == "new":
+                return Token("PCNew", "new")
+            elif cadeiaDeCaracteres == "null":
+                return Token("PCNull", "null")
+            elif cadeiaDeCaracteres == "package":
+                return Token("PCPackage", "package")
+            elif cadeiaDeCaracteres == "private":
+                return Token("PCPrivate", "private")
+            elif cadeiaDeCaracteres == "protected":
+                return Token("PCProtected", "protected")
+            elif cadeiaDeCaracteres == "public":
+                return Token("PCPublic", "public")
+            elif cadeiaDeCaracteres == "return":
+                return Token("PCReturn", "return")
+            elif cadeiaDeCaracteres == "static":
+                return Token("PCStatic", "static")
+            elif cadeiaDeCaracteres == "super":
+                return Token("PCSuper", "super")
+            elif cadeiaDeCaracteres == "this":
+                return Token("PCThis", "this")
+            elif cadeiaDeCaracteres == "true":
+                return Token("PCTrue", "true")
+            elif cadeiaDeCaracteres == "void":
+                return Token("PCVoid", "void")
+            elif cadeiaDeCaracteres == "while":
+                return Token("PCWhile", "while")

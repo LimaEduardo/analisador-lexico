@@ -13,7 +13,7 @@ class Token:
         if self.indice != None:
             return "<"+str(TipoToken[self.tipoToken].name)+","+self.lexema+","+self.indice+">"
         else:
-            return "<"+str(TipoToken[self.tipoToken].name)+","+self.lexema+">"
+            return "<"+str(TipoToken[self.tipoToken].value[1])+","+self.lexema+">"
     
     def getToken(self):
         print(self.tipoToken)
