@@ -1,1 +1,5 @@
 referencias/
+*.pyc
+enumtest.py
+settings.json
+__pychace__/

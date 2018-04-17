@@ -1,49 +1,50 @@
 from enum import Enum
 
-class TipoToken(Enum):
+class TipoToken(Enum): 
+    PCAbstract = ("abstract", "reservada")
+    PCBoolean = ("boolean", "reservada")
+    PCChar = ("char", "reservada")
+    PCClass = ("class","reservada")
+    PCElse = ("else","reservada")
+    PCExtends = ("extends","reservada")
+    PCFalse = ("false","reservada")
+    PCImport = ("import","reservada")
+    PCIf = ("if","reservada")
+    PCInstanceOf = ("instanceof","reservada")
+    PCInt = ("int", "reservada")
+    PCNew = ("new", "reservada")
+    PCNull = ("null", "reservada")
+    PCPackage = ("package", "reservada")
+    PCPrivate = ("private", "reservada")
+    PCProtected = ("protected", "reservada")
+    PCPublic = ("public", "reservada")
+    PCReturn = ("return", "reservada")
+    PCStatic = ("static", "reservada")
+    PCSuper = ("super", "reservada")
+    PCThis = ("this", "reservada")
+    PCTrue = ("true", "reservada")
+    PCVoid = ("void", "reservada")
+    PCWhile = ("while", "reservada")
+
+    OPRecebe = ("=", "operador")
+    OPIgual = ("==", "operador")
+    OPMaior = (">", "operador")
+    OPIncrementa = ("++", "operador")
+    OPAnd = ("&&", "operador")
+    OPMenorIgual = ("<=", "operador")
+    OPNao = ("!", "operador")
+    OPMenos  = ("-", "operador")
+    OPDecrementa = ("--", "operador")
+    OPSoma = ("+", "operador")
+    OPSomaERecebe = ("+=", "operador")
+    OpMultiplica = ("*", "operador")
     
-    PCAbstract = "abstract"
-    PCBoolean = "boolean"
-    PCChar = "char"
-    PCClas = "class"
-    PCElse = "else"
-    PCExtends = "extends"
-    PCFalse = "false"
-    PCImport = "import"
-    PCIf = "if"
-    PCInstanceOf = "instanceof"
-    PCInt = "int"
-    PCNew = "new"
-    PCNull = "null"
-    PCPackage = "package"
-    PCPrivate = "private"
-    PCProtected = "protected"
-    PCPublic = "public"
-    PCReturn = "return"
-    PCStatic = "static"
-    PCSuper = "super"
-    PCThis = "this"
-    PCTrue = "true"
-    PCVoid = "void"
-    PCWhile = "while"
-    OPRecebe = "="
-    OPIgual = "=="
-    OPMaior = ">"
-    OPIncrementa = "++"
-    OPAnd = "&&"
-    OPMenorIgual = "<="
-    OPNao = "!"
-    OPMenos  = "-"
-    OPDecrementa = "--"
-    OPSoma = "+"
-    OPSomaERecebe = "+="
-    OpMultiplica = "*"
-    Virgula = ","
-    Ponto = "."
-    AbreColchete = "["
-    AbreChave = "{"
-    AbreParentese = "("
-    FechaParentese = ")"
-    FechaChave = "}",
-    FechaColchete = "]"
-    PontoEVirgula = ";"
+    Virgula = (",", "separador")
+    Ponto = (".", "separador")
+    AbreColchete = ("[","separador")
+    AbreChave = ("{","separador")
+    AbreParentese = ("(","separador")
+    FechaParentese = (")","separador")
+    FechaChave = ("}","separador")
+    FechaColchete = ("]","separador")
+    PontoEVirgula = (";","separador")
