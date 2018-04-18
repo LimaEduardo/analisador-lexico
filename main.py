@@ -5,6 +5,5 @@ from analisadorLexico import AnalisadorLexico
 
 if __name__ == "__main__":
     analisador = AnalisadorLexico("exemplo.jmm")
-    token = None
-    while token = analisador.proximoToken() != None:
-        print(token)
+    analisador.analisa()
+    analisador.imprimeFluxoDeTokens()

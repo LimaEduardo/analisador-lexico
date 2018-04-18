@@ -48,3 +48,7 @@ class TipoToken(Enum):
     FechaChave = ("}","separador")
     FechaColchete = ("]","separador")
     PontoEVirgula = (";","separador")
+
+    Int = ("int_literal", "int_literal")
+    Char = ("char_literal", "char_literal")
+    String = ("string_literal", "string_literal")
