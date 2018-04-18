@@ -52,3 +52,4 @@ class TipoToken(Enum):
     Int = ("int_literal", "int_literal")
     Char = ("char_literal", "char_literal")
     String = ("string_literal", "string_literal")
+    Variavel = ("variavel_literal", "variavel_literal")

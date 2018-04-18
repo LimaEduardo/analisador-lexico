@@ -16,7 +16,7 @@ class Token:
             return "<"+str(TipoToken[self.tipoToken].name)+","+self.lexema+">"
     
     def getTipo(self):
-        return TipoToken[self.tipoToken].name
+        return self.tipoToken
     
     def getLexema(self):
         return self.lexema
