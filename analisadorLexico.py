@@ -8,30 +8,27 @@ class AnalisadorLexico:
 
     def __init__(self, nomeArquivo):
         self.arquivo = LeitorDeArquivos(nomeArquivo)
+        self.arquivoLinhas = arquivo.linhasArquivo
         self.buffer = []
         self.fluxoDeTokens = []
         self.tabelaDeSimbolos = {}
-        self.operador = {"=", "==", ">", "++", "&&", "<=", "!", "-", "--", "+", "+=", "*" }
-        self.separador = {",", ".", "[", "{", "(", ")","}", "]", ";"}
-        self.reservada = {"abstract", "boolean", "char", "class", "else" ,"extends" ,"false", "import", "if" ,"instanceof", "int", "new", "null", "package", "private", "protected" ,"public", "return", "static", "super", "this", "true", "void", "while"}
+        self.operador = {"=": TipoToken.OPIgual , "==" : TipoToken.OPRecebe, ">": TipoToken.OPMaior, "++" : TipoToken.OPIncrementa, "&&" : TipoToken.OPAnd, "<=" : TipoToken.OPMenorIgual, "!" : TipoToken.OPNao, "-" : TipoToken.OPMenos, "--" : TipoToken.OPDecrementa, "+" : TipoToken.OPSoma, "+=" : TipoToken.OPSomaERecebe, "*": TipoToken.OpMultiplica }
+        self.separador = {",": TipoToken.SepVirgula, "." : TipoToken.SepPonto, "[" : TipoToken.SepAbreColchete, "{" : TipoToken.SepAbreChave, "(" : TipoToken.SepAbreParentese, ")" : TipoToken.SepFechaParentese,"}" : TipoToken.SepFechaChave, "]" : TipoToken.SepFechaColchete, ";" : TipoToken.SepPontoEVirgula}
+        self.reservada = {"abstract": TipoToken.PCAbstract, "boolean" : TipoToken.PCBoolean, "char" : TipoToken.PCChar, "class" : TipoToken.PCClass, "else" : TipoToken.PCElse ,"extends" : TipoToken.PCExtends ,"false" : TipoToken.PCFalse, "import" : TipoToken.PCImport, "if": TipoToken.PCIf ,"instanceof" : TipoToken.PCInstanceOf, "int" : TipoToken.PCInt, "new" : TipoToken.PCNew, "null" : TipoToken.PCNull, "package" : TipoToken.PCPackage, "private" : TipoToken.PCPrivate, "protected": TipoToken.PCProtected ,"public" : TipoToken.PCPublic, "return" : TipoToken.PCReturn, "static" : TipoToken.PCStatic, "super" : TipoToken.PCSuper, "this" : TipoToken.PCThis, "true" : TipoToken.PCTrue, "void" : TipoToken.PCVoid, "while" : TipoToken.PCWhile}
         self.comentario = False
-    
-    # def proximoToken(self):
-    #     while char = arquivo.leProximoChar != None:
-    #         c = str(char)
-    #         if(c == " " or c == "\n"):
-    #             continue
-    #     return
+        self.string = False        
     
     def analisa(self):
         c = self.arquivo.leProximoChar()
         while c != None:
-            if self.comentario:
-                continue
 
             if self.comentario and c == "\n":
                 self.comentario = False
                 self.buffer = []
+
+            if self.comentario:
+                c = self.arquivo.leProximoChar()
+                continue
 
             if ''.join(self.buffer) == "//":
                 self.comentario = True
@@ -69,10 +66,11 @@ class AnalisadorLexico:
             if token.getLexema() not in self.tabelaDeSimbolos:
                 self.tabelaDeSimbolos[len(self.tabelaDeSimbolos)] = token.getLexema()
         self.fluxoDeTokens.append(token)
-        print(self.fluxoDeTokens)
+        self.imprimeFluxoDeTokens()
     
     def imprimeFluxoDeTokens(self):
-        print(self.fluxoDeTokens)
+        for token in self.fluxoDeTokens:
+            print(token.getLexema())
 
 
     def identificaToken(self, cadeiaDeCaracteres):
@@ -177,7 +175,7 @@ class AnalisadorLexico:
             # [1-9]?[0-9]* numero
             padraoNumero = re.compile("^[1-9]?[0-9]*$")
             padraoChar = re.compile("^'\w'$")
-            padraoString = re.compile("^'(\w)*'$")
+            padraoString = re.compile("^\"(\w)*\"$")
             padraoVariavel = re.compile("^(\w)*$")
             if re.match(padraoNumero, cadeiaDeCaracteres):
                 return Token("int_literal", cadeiaDeCaracteres, 0)
