@@ -7,8 +7,8 @@ from error import Error
 
 class AnalisadorLexico:
 
-    def __init__(self, nomeArquivo):
-        self.arquivo = LeitorDeArquivos(nomeArquivo)
+    def __init__(self, nomeArquivoEntrada):
+        self.arquivo = LeitorDeArquivos(nomeArquivoEntrada)
         self.arquivoLinhas = self.arquivo.linhasArquivo
         self.fluxoDeTokens = []
         self.tabelaDeSimbolos = {}
@@ -157,13 +157,11 @@ class AnalisadorLexico:
                                 error = Error(indiceLinha, indiceColuna, "lexico",  "Numero Invalido")
                         else:
                             self.geraToken(self.literal["int_literal"], caractere)
-                        print(caractere)
                     else:
                         while self.ehNumero(caractere):
                             indiceColuna += 1
                             if self.ehIndiceValidoCol(indiceLinha, indiceColuna):
                                 caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
-                                print(caractere)
                             else:
                                 caractere = None
                         lexema = self.arquivoLinhas[indiceLinha][iniLexema:indiceColuna]
@@ -214,9 +212,6 @@ class AnalisadorLexico:
                         indiceColuna += 1
                         continue
                     elif ehOperadorDup:
-                        print(caractere+c1)
-                        print("DUP")
-                        print(self.operador[caractere+c1])
                         self.geraToken(self.operador[caractere+c1], caractere+c1)
                         indiceColuna += 2
                         continue

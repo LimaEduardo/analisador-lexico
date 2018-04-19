@@ -3,3 +3,6 @@ referencias/
 enumtest.py
 settings.json
 __pychace__/
+fluxoDeTokens
+tabelaDeSimbolos
+*.swp
