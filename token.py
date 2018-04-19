@@ -9,9 +9,13 @@ class Token:
     def toString(self):
         strTipo = str(self.tipoToken)
         if self.indice != None:
-            return "<"+strTipo.split('.')[1]+","+self.lexema+","+self.indice+">"
+            return "<"+strTipo.split('.')[1]+","+str(self.indice)+">"
+            #return "<"+self.lexema+","+str(self.indice)+">"
         else:
-            return "<"+strTipo.split('.')[1]+","+self.lexema+">"
+            return "<"+strTipo.split('.')[1]+">"
+    
+    def toStringTabela(self):
+        return "|"+str(self.indice)+" | "+ str(self.lexema)+"|";
     
     def getTipo(self):
         return self.tipoToken
@@ -19,10 +23,6 @@ class Token:
     def getLexema(self):
         return self.lexema
     
-    def getToken(self):
-        print(self.tipoToken)
-        print(TipoToken[self.tipoToken])
-        print(TipoToken[self.tipoToken].value)
 
 # if __name__ == "__main__":
 #     token = Token("PCChar", "if")

@@ -7,3 +7,4 @@ if __name__ == "__main__":
     analisador = AnalisadorLexico("exemplo2.jmm")
     analisador.analisa()
     analisador.imprimeFluxoDeTokens()
+    analisador.imprimeTabelaDeSimbolos()

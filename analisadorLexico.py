@@ -121,7 +121,6 @@ class AnalisadorLexico:
                     
                     
                     lexema = self.arquivoLinhas[indiceLinha][iniLexema: (indiceColuna)]
-                    print(lexema)
                     if lexema not in self.reservada:  
                         self.geraToken(self.literal["variavel_literal"], lexema)
                         continue
@@ -133,26 +132,32 @@ class AnalisadorLexico:
                 #-------------------------------------------------------------
                 # Teste se é um numero (v)
                 if self.ehNumero(caractere):
+                    caractere = int(caractere)
                     iniLexema = indiceColuna
-                    if caractere == 0:
+                    if int(caractere) == 0:
+                        print('a')
                         if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
-                            c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1] 
+                            c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
                             
-                            if((c1 == " ") or (ehOperador(c1)) or (c1 in self.separador) or (c == "\t") and (c == "\n")):
-                                self.geraToken(self.literal["int_literal"], 0)
+                            if((c1 == " ") or (self.ehOperador(caractere, c1)) or (c1 in self.separador) or (c1 == "\t") and (c1 == "\n")):
+                                self.geraToken(self.literal["int_literal"], caractere)
                                 indiceColuna += 1
                                 continue
-                            else: # Caso proximo ao zero ainda seja um numero
+                            else: # Caso proximo ao zero  nao seja caracter valido
                                 error = Error(indiceLinha, indiceColuna, "lexico",  "Numero Invalido")
+                        else:
+                            self.geraToken(self.literal["int_literal"], caractere)
+                        print(caractere)
                     else:
                         while self.ehNumero(caractere):
                             indiceColuna += 1
                             if self.ehIndiceValidoCol(indiceLinha, indiceColuna):
-                                caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
+                                caractere = int(self.arquivoLinhas[indiceLinha][indiceColuna])
                             else:
                                 caractere = None
                         lexema = self.arquivoLinhas[indiceLinha][iniLexema: (indiceColuna - 1)]
                         self.geraToken(self.literal["int_literal"], lexema)
+                        print(lexema)
                         continue
                 #-------------------------------------------------------------
 
@@ -164,40 +169,44 @@ class AnalisadorLexico:
                 ehOperadorUni = False
                 ehOperadorDup = False
                 
-                if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
-                    c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1] 
-                    if caractere == '=':
-                        if c1 == '=':
-                            ehOperadorDup = True
-                    elif caractere == '+':
-                        if c1 == '+':
-                            ehOperadorDup = True
-                    elif caractere == '&':
-                        if c1 == '&':
-                            ehOperadorDup = True
-                    elif caractere == '<':
-                        if c1 == '=':
-                            ehOperadorDup = True
-                    elif caractere == '-':
-                        if c1 == '-':
-                            ehOperadorDup = True
-                    elif caractere == '+':
-                        if c1 == '=':
-                            ehOperadorDup = True
-                else:
-                    if caractere in self.operador:
-                        ehOperadorUni = True
-                        ehOperadorDup = False
+                if caractere in self.operador:
+                    ehOperadorUni = True
+                    
+                    if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
+                        c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1] 
+                        if caractere == '=':
+                            if c1 == '=':
+                                ehOperadorDup = True
+                                ehOperadorUni = False
+                        elif caractere == '+':
+                            if c1 == '+':
+                                ehOperadorDup = True
+                                ehOperadorUni = False
+                            elif c1 == '=':
+                                ehOperadorDup = True
+                                ehOperadorUni = False
+                        elif caractere == '&':
+                            if c1 == '&':
+                                ehOperadorDup = True
+                                ehOperadorUni = False
+                        elif caractere == '<':
+                            if c1 == '=':
+                                ehOperadorDup = True
+                                ehOperadorUni = False
+                        elif caractere == '-':
+                            if c1 == '-':
+                                ehOperadorDup = True
+                                ehOperadorUni = False
                 
-                # Criando os tokens de um operador
-                if ehOperadorUni:
-                    self.geraToken(self.operador[caractere], caractere)
-                    indiceColuna += 1
-                    continue
-                elif ehOperadorDup:
-                    self.geraToken(self.operador[caractere+c1], caractere+c1)
-                    indiceColuna += 2
-                    continue
+                    # Criando os tokens de um operador
+                    if ehOperadorUni:
+                        self.geraToken(self.operador[caractere], caractere)
+                        indiceColuna += 1
+                        continue
+                    elif ehOperadorDup:
+                        self.geraToken(self.operador[caractere+c1], caractere+c1)
+                        indiceColuna += 2
+                        continue
                 #-------------------------------------------------------------
                 
                 
@@ -229,19 +238,20 @@ class AnalisadorLexico:
 
     def geraToken(self, tipoToken, lexema):
         # Se é um desses tipos, deverá ser registrado na tabela de simbolos
-        if tipoToken == "int_literal" or tipoToken == "char_literal" or tipoToken == "string_literal" or tipoToken == "variavel_literal":
+        if tipoToken == self.literal["int_literal"] or tipoToken == self.literal["char_literal"] or tipoToken == self.literal["string_literal"] or tipoToken == self.literal["variavel_literal"]:
+            #print (lexema, tipoToken)
             # Se o lexema não existir na tabela, então insere ele
-            if lexema not in self.tabelaDeSimbolos:
+            if lexema not in self.tabelaDeSimbolos.values():
                 #O indice é vai ser dado pelo tamanho atual da tabela de simbolos
                 #Insere o token na tabela de simbolos, cria o token e adiciona nno fluxo de tokens
                 self.tabelaDeSimbolos[len(self.tabelaDeSimbolos)] = lexema
-                token = Token(tipoToken,lexema, len(self.tabelaDeSimbolos))
+                token = Token(tipoToken, lexema, len(self.tabelaDeSimbolos))
                 self.fluxoDeTokens.append(token)
                 return
             else:
                 #Se o token já existe, precisamos então ver com é o indice dele para inserir no fluxo de tokens
-                index = [chave for (chave, valor) in self.tabelaDeSimbolos if valor == lexema] # <- é gambiarra, mas funciona.
-                token = Token(tipoToken, lexema, chave)
+                index = [chave for chave in self.tabelaDeSimbolos if self.tabelaDeSimbolos[chave] == lexema] # <- é gambiarra, mas funciona.
+                token = Token(tipoToken, lexema, index)
                 self.fluxoDeTokens.append(token)
                 return
         else:
@@ -249,7 +259,18 @@ class AnalisadorLexico:
             token = Token(tipoToken, lexema)
             self.fluxoDeTokens.append(token)
             return
+            
+    def imprimeTabelaDeSimbolos(self):
+        tabelaDeSimbolos = open("tabelaDeSimbolos",'w')
+        #print("TABELADESIMBOLOS")
+        for indice in self.tabelaDeSimbolos:
+            
+            tabelaDeSimbolos.write("|" + str(indice) + "|" + str(self.tabelaDeSimbolos[indice] + "| \n"))
+        tabelaDeSimbolos.close()
     
     def imprimeFluxoDeTokens(self):
+        
+        fluxoDeTokens = open("fluxoDeTokens",'w')
         for token in self.fluxoDeTokens:
-            print(token.toString())
+            fluxoDeTokens.write(token.toString() + "\n")
+        fluxoDeTokens.close()
