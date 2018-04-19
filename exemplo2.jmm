@@ -1,13 +1,16 @@
 package pass;
+//instanceof
+//222
+//int
 
 import java.lang.Integer;
 
-import java.lang.System;
+import java.lang.System;@
 
 public class Series {
-    public static int ARITHMETIC = 0;
+    public static int ARITHMETIC = 1; // comentario char nois 
     
-    public static int GEOMETRIC = 0;
+    public static int GEOMETRIC = 2123; // int a b c 1 2 3
     
     private int a;
     private int d;

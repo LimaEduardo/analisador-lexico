@@ -12,7 +12,7 @@ class AnalisadorLexico:
         self.arquivoLinhas = self.arquivo.linhasArquivo
         self.fluxoDeTokens = []
         self.tabelaDeSimbolos = {}
-        self.operador = {"=": TipoToken.OPIgual , "==" : TipoToken.OPRecebe, ">": TipoToken.OPMaior, "++" : TipoToken.OPIncrementa, "&&" : TipoToken.OPAnd, "<=" : TipoToken.OPMenorIgual, "!" : TipoToken.OPNao, "-" : TipoToken.OPMenos, "--" : TipoToken.OPDecrementa, "+" : TipoToken.OPSoma, "+=" : TipoToken.OPSomaERecebe, "*": TipoToken.OpMultiplica }
+        self.operador = {"=": TipoToken.OPRecebe , "==" : TipoToken.OPIgual, ">": TipoToken.OPMaior, "++" : TipoToken.OPIncrementa, "&&" : TipoToken.OPAnd, "<=" : TipoToken.OPMenorIgual, "!" : TipoToken.OPNao, "-" : TipoToken.OPMenos, "--" : TipoToken.OPDecrementa, "+" : TipoToken.OPSoma, "+=" : TipoToken.OPSomaERecebe, "*": TipoToken.OpMultiplica }
         self.separador = {",": TipoToken.SepVirgula, "." : TipoToken.SepPonto, "[" : TipoToken.SepAbreColchete, "{" : TipoToken.SepAbreChave, "(" : TipoToken.SepAbreParentese, ")" : TipoToken.SepFechaParentese,"}" : TipoToken.SepFechaChave, "]" : TipoToken.SepFechaColchete, ";" : TipoToken.SepPontoEVirgula}
         self.reservada = {"abstract": TipoToken.PCAbstract, "boolean" : TipoToken.PCBoolean, "char" : TipoToken.PCChar, "class" : TipoToken.PCClass, "else" : TipoToken.PCElse ,"extends" : TipoToken.PCExtends ,"false" : TipoToken.PCFalse, "import" : TipoToken.PCImport, "if": TipoToken.PCIf ,"instanceof" : TipoToken.PCInstanceOf, "int" : TipoToken.PCInt, "new" : TipoToken.PCNew, "null" : TipoToken.PCNull, "package" : TipoToken.PCPackage, "private" : TipoToken.PCPrivate, "protected": TipoToken.PCProtected ,"public" : TipoToken.PCPublic, "return" : TipoToken.PCReturn, "static" : TipoToken.PCStatic, "super" : TipoToken.PCSuper, "this" : TipoToken.PCThis, "true" : TipoToken.PCTrue, "void" : TipoToken.PCVoid, "while" : TipoToken.PCWhile}
         self.literal = {"int_literal": TipoToken.Int, "char_literal": TipoToken.Char, "string_literal": TipoToken.String, "variavel_literal": TipoToken.Variavel}
@@ -67,6 +67,18 @@ class AnalisadorLexico:
             indiceColuna = 0
             while (indiceColuna < len(self.arquivoLinhas[indiceLinha])):
                 caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
+                
+                #-------------------------------------------------------------
+                # Testa se é um comentario
+                if caractere == '/':
+                    if self.ehIndiceValidoCol(indiceLinha, indiceColuna+1):
+                        c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
+                        if c1 == '/':
+                            #Então é um comentário
+                            indiceLinha += 1
+                            indiceColuna = 0
+                            continue
+                #-------------------------------------------------------------
                 
                 #-------------------------------------------------------------
                 # Testa se é um char Literal (v)
@@ -132,10 +144,8 @@ class AnalisadorLexico:
                 #-------------------------------------------------------------
                 # Teste se é um numero (v)
                 if self.ehNumero(caractere):
-                    caractere = int(caractere)
                     iniLexema = indiceColuna
-                    if int(caractere) == 0:
-                        print('a')
+                    if caractere == "0":
                         if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
                             c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
                             
@@ -152,12 +162,12 @@ class AnalisadorLexico:
                         while self.ehNumero(caractere):
                             indiceColuna += 1
                             if self.ehIndiceValidoCol(indiceLinha, indiceColuna):
-                                caractere = int(self.arquivoLinhas[indiceLinha][indiceColuna])
+                                caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
+                                print(caractere)
                             else:
                                 caractere = None
-                        lexema = self.arquivoLinhas[indiceLinha][iniLexema: (indiceColuna - 1)]
+                        lexema = self.arquivoLinhas[indiceLinha][iniLexema:indiceColuna]
                         self.geraToken(self.literal["int_literal"], lexema)
-                        print(lexema)
                         continue
                 #-------------------------------------------------------------
 
@@ -204,6 +214,9 @@ class AnalisadorLexico:
                         indiceColuna += 1
                         continue
                     elif ehOperadorDup:
+                        print(caractere+c1)
+                        print("DUP")
+                        print(self.operador[caractere+c1])
                         self.geraToken(self.operador[caractere+c1], caractere+c1)
                         indiceColuna += 2
                         continue
@@ -220,6 +233,8 @@ class AnalisadorLexico:
                  #   error = Error(indiceLinha, indiceColuna, "lexico",  "erro final")
                 #-------------------------------------------------------------
                 indiceColuna += 1
+                
+                
             indiceLinha += 1
     
     def separador(self, char):
@@ -244,13 +259,14 @@ class AnalisadorLexico:
             if lexema not in self.tabelaDeSimbolos.values():
                 #O indice é vai ser dado pelo tamanho atual da tabela de simbolos
                 #Insere o token na tabela de simbolos, cria o token e adiciona nno fluxo de tokens
-                self.tabelaDeSimbolos[len(self.tabelaDeSimbolos)] = lexema
-                token = Token(tipoToken, lexema, len(self.tabelaDeSimbolos))
+                index = len(self.tabelaDeSimbolos)
+                self.tabelaDeSimbolos[index] = lexema
+                token = Token(tipoToken, lexema, index)
                 self.fluxoDeTokens.append(token)
                 return
             else:
                 #Se o token já existe, precisamos então ver com é o indice dele para inserir no fluxo de tokens
-                index = [chave for chave in self.tabelaDeSimbolos if self.tabelaDeSimbolos[chave] == lexema] # <- é gambiarra, mas funciona.
+                index = [chave for chave in self.tabelaDeSimbolos if self.tabelaDeSimbolos[chave] == lexema][0] # <- é gambiarra, mas funciona.
                 token = Token(tipoToken, lexema, index)
                 self.fluxoDeTokens.append(token)
                 return
