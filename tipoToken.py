@@ -49,7 +49,7 @@ class TipoToken(Enum):
     SepFechaColchete = ("]","separador")
     SepPontoEVirgula = (";","separador")
 
-    Int = ("int_literal", "int_literal")
-    Char = ("char_literal", "char_literal")
-    String = ("string_literal", "string_literal")
-    Variavel = ("variavel_literal", "variavel_literal")
+    Int = ("int_literal", "Int")
+    Char = ("char_literal", "Char")
+    String = ("string_literal", "String")
+    Variavel = ("variavel_literal", "Variavel")

@@ -199,125 +199,25 @@ class AnalisadorLexico:
         except:
             return False
 
-    
-    def resolveToken(self, token):
-        tipo = token.getTipo()
-        if tipo == "int_literal" or tipo == "char_literal" or tipo == "string_literal":
-            if token.getLexema() not in self.tabelaDeSimbolos:
-                self.tabelaDeSimbolos[len(self.tabelaDeSimbolos)] = token.getLexema()
-        self.fluxoDeTokens.append(token)
-        self.imprimeFluxoDeTokens()
-
-
-    # def identificaToken(self, cadeiaDeCaracteres):
-    #     # tipo = str(TipoToken[cadeiaDeCaracteres].value[1])
-    #     print(self.lexema)
-    #     if cadeiaDeCaracteres in self.operador:
-    #         if cadeiaDeCaracteres == "=":
-    #             return Token("OPRecebe", "=")
-    #         elif cadeiaDeCaracteres == "==":
-    #             return Token("OPIgual", "==")
-    #         elif cadeiaDeCaracteres == ">":
-    #             return Token("OPMaior", ">")
-    #         elif cadeiaDeCaracteres == "++":
-    #             return Token("OPIncrementa", "++")
-    #         elif cadeiaDeCaracteres == "&&":
-    #             return Token("OPAnd", "&&")
-    #         elif cadeiaDeCaracteres == "<=":
-    #             return Token("OPMenorIgual", "<=")
-    #         elif cadeiaDeCaracteres == "!":
-    #             return Token("OPNao", "!")
-    #         elif cadeiaDeCaracteres == "-":
-    #             return Token("OPMenos", "-")
-    #         elif cadeiaDeCaracteres == "--":
-    #             return Token("OPDecrementa", "--")
-    #         elif cadeiaDeCaracteres == "+":
-    #             return Token("OPSoma", "+")
-    #         elif cadeiaDeCaracteres == "+=":
-    #             return Token("OPSomaERecebe", "+=")
-    #         elif cadeiaDeCaracteres == "*":
-    #             return Token("OPMultiplica", "*")
-
-    #     elif cadeiaDeCaracteres in self.separador:
-    #         if cadeiaDeCaracteres == ",":
-    #             return Token("Virgula", ",")
-    #         elif cadeiaDeCaracteres == ".":
-    #             return Token("Ponto", ".")
-    #         elif cadeiaDeCaracteres == "[":
-    #             return Token("AbreColchete", "[")
-    #         elif cadeiaDeCaracteres == "{":
-    #             return Token("AbreChave", "{")
-    #         elif cadeiaDeCaracteres == "(":
-    #             return Token("AbreParentese", "(")
-    #         elif cadeiaDeCaracteres == ")":
-    #             return Token("FechaParentese", ")")
-    #         elif cadeiaDeCaracteres == "}":
-    #             return Token("FechaChave", "}")
-    #         elif cadeiaDeCaracteres == "]":
-    #             return Token("FechaColchete", "]")
-    #         elif cadeiaDeCaracteres == ";":
-    #             return Token("PontoEVirgula", ";")
-        
-    #     elif cadeiaDeCaracteres in self.reservada:
-    #         if cadeiaDeCaracteres == "abstract":
-    #             return Token("PCAbstract", "abstract")
-    #         elif cadeiaDeCaracteres == "boolean":
-    #             return Token("PCBoolean", "boolean")
-    #         elif cadeiaDeCaracteres == "char":
-    #             return Token("PCChar", "char")
-    #         elif cadeiaDeCaracteres == "class":
-    #             return Token("PCClass", "class")
-    #         elif cadeiaDeCaracteres == "else":
-    #             return Token("PCElse", "else")
-    #         elif cadeiaDeCaracteres == "extends":
-    #             return Token("PCExtends", "extends")
-    #         elif cadeiaDeCaracteres == "false":
-    #             return Token("PCFalse", "false")
-    #         elif cadeiaDeCaracteres == "import":
-    #             return Token("PCImport", "import")
-    #         elif cadeiaDeCaracteres == "if":
-    #             return Token("PCIf", "if")
-    #         elif cadeiaDeCaracteres == "instanceof":
-    #             return Token("PCInstanceOf", "instanceof")
-    #         elif cadeiaDeCaracteres == "int":
-    #             return Token("PCInt", "int")
-    #         elif cadeiaDeCaracteres == "new":
-    #             return Token("PCNew", "new")
-    #         elif cadeiaDeCaracteres == "null":
-    #             return Token("PCNull", "null")
-    #         elif cadeiaDeCaracteres == "package":
-    #             return Token("PCPackage", "package")
-    #         elif cadeiaDeCaracteres == "private":
-    #             return Token("PCPrivate", "private")
-    #         elif cadeiaDeCaracteres == "protected":
-    #             return Token("PCProtected", "protected")
-    #         elif cadeiaDeCaracteres == "public":
-    #             return Token("PCPublic", "public")
-    #         elif cadeiaDeCaracteres == "return":
-    #             return Token("PCReturn", "return")
-    #         elif cadeiaDeCaracteres == "static":
-    #             return Token("PCStatic", "static")
-    #         elif cadeiaDeCaracteres == "super":
-    #             return Token("PCSuper", "super")
-    #         elif cadeiaDeCaracteres == "this":
-    #             return Token("PCThis", "this")
-    #         elif cadeiaDeCaracteres == "true":
-    #             return Token("PCTrue", "true")
-    #         elif cadeiaDeCaracteres == "void":
-    #             return Token("PCVoid", "void")
-    #         elif cadeiaDeCaracteres == "while":
-    #             return Token("PCWhile", "while")
-    #     else:
-    #         # [1-9]?[0-9]* numero
-    #         padraoNumero = re.compile("^[1-9]?[0-9]*$")
-    #         padraoChar = re.compile("^'\w'$")
-    #         padraoString = re.compile("^\"(\w)*\"$")
-    #         padraoVariavel = re.compile("^(\w)*$")
-    #         if re.match(padraoNumero, cadeiaDeCaracteres):
-    #             return Token("int_literal", cadeiaDeCaracteres, 0)
-    #         elif re.match(padraoChar, cadeiaDeCaracteres):
-    #             return Token("char_literal", cadeiaDeCaracteres, 0)
-    #         elif re.match(padraoString, cadeiaDeCaracteres):
-    #             return Token("string_literal", cadeiaDeCaracteres, 0)
-    #         elif re.match(padraoVariavel, cadeiaDeCaracteres):
-    #             return Token("variavel_literal", cadeiaDeCaracteres, 0)
+    def resolveToken(self, tipoToken, lexema):
+        # Se é um desses tipos, deverá ser registrado na tabela de simbolos
+        if tipoToken == "int_literal" or tipoToken == "char_literal" or tipoToken == "string_literal" or tipoToken == "variavel_literal":
+            # Se o lexema não existir na tabela, então insere ele
+            if lexema not in self.tabelaDeSimbolos:
+                #O indice é vai ser dado pelo tamanho atual da tabela de simbolos
+                #Insere o token na tabela de simbolos, cria o token e adiciona nno fluxo de tokens
+                self.tabelaDeSimbolos[len(self.tabelaDeSimbolos)] = lexema
+                token = Token(tipoToken,lexema, len(self.tabelaDeSimbolos))
+                self.fluxoDeTokens.append(token)
+                return
+            else:
+                #Se o token já existe, precisamos então ver com é o indice dele para inserir no fluxo de tokens
+                index = [chave for (chave, valor) in self.tabelaDeSimbolos if valor == lexema] # <- é gambiarra, mas funciona.
+                token = Token(tipoToken, lexema, chave)
+                self.fluxoDeTokens.append(token)
+                return
+        else:
+            # Se o lexema não for de um tipo que requer um tipo, então é só inserir este no fluxo de tokens
+            token = Token(tipoToken, lexema)
+            self.fluxoDeTokens.append(token)
+            return

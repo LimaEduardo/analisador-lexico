@@ -4,10 +4,7 @@ class Token:
     def __init__(self, tipo, lexema, indice=None): 
         self.tipoToken = tipo
         self.lexema = lexema
-        if indice is not None:
-            self.indice = indice
-        else: 
-            self.indice = indice
+        self.indice = indice
     
     def toString(self):
         if self.indice != None:
