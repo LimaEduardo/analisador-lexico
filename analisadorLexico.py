@@ -1,6 +1,7 @@
 import re
 
 from leitorDeArquivos import LeitorDeArquivos
+from prettytable import PrettyTable
 from tipoToken import TipoToken
 from token import Token
 from error import Error
@@ -273,15 +274,16 @@ class AnalisadorLexico:
             
     def imprimeTabelaDeSimbolos(self):
         tabelaDeSimbolos = open("tabelaDeSimbolos",'w')
-        #print("TABELADESIMBOLOS")
+        t = PrettyTable(['Indice', 'Lexema'])
         for indice in self.tabelaDeSimbolos:
-            
-            tabelaDeSimbolos.write("|" + str(indice) + "|" + str(self.tabelaDeSimbolos[indice] + "| \n"))
+            t.add_row([str(indice), str(self.tabelaDeSimbolos[indice])])
+            #tabelaDeSimbolos.write("|" + str(indice) + "|" + str(self.tabelaDeSimbolos[indice] + "| \n"))
+        tabelaDeSimbolos.write(str(t))
         tabelaDeSimbolos.close()
     
     def imprimeFluxoDeTokens(self):
         
         fluxoDeTokens = open("fluxoDeTokens",'w')
         for token in self.fluxoDeTokens:
-            fluxoDeTokens.write(token.toString() + "\n")
+            fluxoDeTokens.write(token.toString()+", ")
         fluxoDeTokens.close()

@@ -6,3 +6,5 @@ __pychace__/
 fluxoDeTokens
 tabelaDeSimbolos
 *.swp
+.Rhistory
+
