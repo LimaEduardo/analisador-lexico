@@ -53,8 +53,8 @@ class AnalisadorLexico:
         else:
             return False
     
-    def ehIndiceValidoCol(self, indiceCol):
-        if indiceCol < len(self.arquivoLinhas[indiceLinha]:
+    def ehIndiceValidoCol(self,indiceLin, indiceCol):
+        if indiceCol < len(self.arquivoLinhas[indiceLin]):
             return True
         else:
             return False
@@ -73,34 +73,39 @@ class AnalisadorLexico:
                 
                 #if not ehCharLiteral and caractere == '\'':
                 if caractere == '\'':
-                    if ehIndiceValidoCol(indiceColuna + 1):
+                    if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
                         c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
                         if c1 == '\\':
-                            c2 = self.arquivoLinhas[indiceLinha][indiceColuna + 2]
-                            if  c2 == 'n' or c2 == 'r' or c2 == 't' or c2 == 'b' or c2 == 'f' or c2 == '\'' or c2 == '\"' or c2 == '\\' :
-                                if ehIndiceValidoCol(indiceColuna + 3) and self.arquivoLinhas[indiceLinha][indiceColuna + 3] == '\'':
-                                    self.geraToken(self.literal["char_literal"], caractere+c1+c2+c3)
-                                    indiceColuna += 3
+                            if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 2):
+                                c2 = self.arquivoLinhas[indiceLinha][indiceColuna + 2]
+                                if  c2 == 'n' or c2 == 'r' or c2 == 't' or c2 == 'b' or c2 == 'f' or c2 == '\'' or c2 == '\"' or c2 == '\\' :
+                                    if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 3) and self.arquivoLinhas[indiceLinha][indiceColuna + 3] == '\'':
+                                        self.geraToken(self.literal["char_literal"], caractere+c1+c2+c3)
+                                        indiceColuna += 3
+                                        continue
+                                        
+                                    else: # c3 é diferente de aspas simples (')
+                                        error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal")
+                                        
+                                else: # c2 é diferente '\n' '\r' '\t' '\b' '\f' '\’' '\"' '\\'
+                                    error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal")
+                            else:
+                                error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal, fim de linha")
+                        elif c1 != '\'' and c1 != '\\':
+                            if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 2):
+                                c2 = self.arquivoLinhas[indiceLinha][indiceColuna + 2]
+                                if c2 == '\'':
+                                    self.geraToken(self.literal["char_literal"], caractere+c1+c2)
+                                    indiceColuna += 2
                                     continue
                                     
-                                else: # c3 é diferente de aspas simples (')
-                                    error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal")
-                                    
-                            else: # c2 é diferente '\n' '\r' '\t' '\b' '\f' '\’' '\"' '\\'
-                                error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal")
-                                
-                        elif c1 != '\'' and c1 != '\\':
-                            c2 = self.arquivoLinhas[indiceLinha][indiceColuna + 2]
-                            if c2 == '\'':
-                                self.geraToken(self.literal["char_literal"], caractere+c1+c2)
-                                indiceColuna += 2
-                                continue
-                                
-                            else: # c2 é diferente de aspas simples (')
-                                error = Error(indiceLinha, indiceColuna, "lexico",  "não e char literal")
+                                else: # c2 é diferente de aspas simples (')
+                                    error = Error(indiceLinha, indiceColuna, "lexico",  "não e char literal")
                                 
                         else: # c1 for igual a aspas simples (') ou igual uma barra(\)
                             error = Error(indiceLinha, indiceColuna, "lexico",  "não e char literal")
+                    else:
+                        error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal, fim de linha")
                 #-------------------------------------------------------------
                 
                 
@@ -129,18 +134,23 @@ class AnalisadorLexico:
                 # Teste se é um numero (v)
                 if self.ehNumero(caractere):
                     iniLexema = indiceColuna
-                    if caractere != 0:
-                        c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1] 
-                        if ehNumero(c1) and c1 != 0:
-                            self.geraToken(self.literal["int_literal"], 0)
-                            indiceColuna += 1
-                            continue
-                        else: # Caso proximo ao zero ainda seja um numero
-                            error = Error(indiceLinha, indiceColuna, "lexico",  "não e um numero")
+                    if caractere == 0:
+                        if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
+                            c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1] 
+                            
+                            if((c1 == " ") or (ehOperador(c1)) or (c1 in self.separador) or (c == "\t") and (c == "\n")):
+                                self.geraToken(self.literal["int_literal"], 0)
+                                indiceColuna += 1
+                                continue
+                            else: # Caso proximo ao zero ainda seja um numero
+                                error = Error(indiceLinha, indiceColuna, "lexico",  "Numero Invalido")
                     else:
                         while self.ehNumero(caractere):
                             indiceColuna += 1
-                            caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
+                            if self.ehIndiceValidoCol(indiceLinha, indiceColuna):
+                                caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
+                            else:
+                                caractere = None
                         lexema = self.arquivoLinhas[indiceLinha][iniLexema: (indiceColuna - 1)]
                         self.geraToken(self.literal["int_literal"], lexema)
                         continue
@@ -154,30 +164,30 @@ class AnalisadorLexico:
                 ehOperadorUni = False
                 ehOperadorDup = False
                 
-                
-                c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
-                
-                if caractere == '=':
-                    if c1 == '=':
-                        ehOperadorDup = True
-                elif caractere == '+':
-                    if c1 == '+':
-                        ehOperadorDup = True
-                elif caractere == '&':
-                    if c1 == '&':
-                        ehOperadorDup = True
-                elif caractere == '<':
-                    if c1 == '=':
-                        ehOperadorDup = True
-                elif caractere == '-':
-                    if c1 == '-':
-                        ehOperadorDup = True
-                elif caractere == '+':
-                    if c1 == '=':
-                        ehOperadorDup = True
-                elif caractere in self.operador:
-                    ehOperadorUni = True
-                    ehOperadorDup = False
+                if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
+                    c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1] 
+                    if caractere == '=':
+                        if c1 == '=':
+                            ehOperadorDup = True
+                    elif caractere == '+':
+                        if c1 == '+':
+                            ehOperadorDup = True
+                    elif caractere == '&':
+                        if c1 == '&':
+                            ehOperadorDup = True
+                    elif caractere == '<':
+                        if c1 == '=':
+                            ehOperadorDup = True
+                    elif caractere == '-':
+                        if c1 == '-':
+                            ehOperadorDup = True
+                    elif caractere == '+':
+                        if c1 == '=':
+                            ehOperadorDup = True
+                else:
+                    if caractere in self.operador:
+                        ehOperadorUni = True
+                        ehOperadorDup = False
                 
                 # Criando os tokens de um operador
                 if ehOperadorUni:
@@ -194,7 +204,7 @@ class AnalisadorLexico:
                 #-------------------------------------------------------------
                 #testa se caractere é um separador (v)
                 if caractere in self.separador:
-                    self.geraToken(self.operador[caractere], caractere)
+                    self.geraToken(self.separador[caractere], caractere)
                     indiceColuna += 1
                     continue
                 #else:

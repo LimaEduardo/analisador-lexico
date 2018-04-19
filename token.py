@@ -7,10 +7,11 @@ class Token:
         self.indice = indice
     
     def toString(self):
+        strTipo = str(self.tipoToken)
         if self.indice != None:
-            return "<"+str(TipoToken[self.tipoToken].name)+","+self.lexema+","+self.indice+">"
+            return "<"+strTipo.split('.')[1]+","+self.lexema+","+self.indice+">"
         else:
-            return "<"+str(TipoToken[self.tipoToken].name)+","+self.lexema+">"
+            return "<"+strTipo.split('.')[1]+","+self.lexema+">"
     
     def getTipo(self):
         return self.tipoToken
