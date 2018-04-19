@@ -9,9 +9,9 @@ public class Series {
     
     public static int GEOMETRIC = 2;
     
-    private int a; // first term
-    private int d; // common sum or multiple
-    private int n; // number of terms
+    private int a;
+    private int d;
+    private int n;
     
     public Series() {
         this(1, 1, 10);
@@ -34,16 +34,5 @@ public class Series {
             sum += t;
         }
         return sum;
-    }
-
-    public static void main(String[] args) {
-        int a = Integer.parseInt(args[0]);
-        int d = Integer.parseInt(args[1]);
-        int n = Integer.parseInt(args[2]);
-        Series s = new Series(a, d, n);
-        System.out.println("Arithmetic sum = "
-        + s.computeSum(Series.ARITHMETIC));
-        System.out.println("Geometric sum = "
-        + s.computeSum(Series.GEOMETRIC));
     }
 }
