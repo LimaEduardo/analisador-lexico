@@ -11,6 +11,5 @@ class Error:
         if mensagem != None:
             print (mensagem) 
         
-        sys.exit()
             
   

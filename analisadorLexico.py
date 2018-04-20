@@ -140,8 +140,10 @@ class AnalisadorLexico:
                         self.geraToken(self.literal["string_literal"], lexema)
                         continue
                     
+                    error = Error(indiceLinha, indiceColuna, "lexico",  "Quebra de linha dentro de uma string")
+                    
                     #Se chegar aqui, é pq é uma string multilinhas
-                    for linha in range(indiceIniLinha, indiceFinalLinha+1):
+                    '''for linha in range(indiceIniLinha, indiceFinalLinha+1):
                         #Se é a primeira linha, pega da coluna inicial até o final da linha
                         if(linha == indiceIniLinha):
                             lexema += self.arquivoLinhas[linha][indiceIniColuna: len(self.arquivoLinhas[linha])]
@@ -153,7 +155,7 @@ class AnalisadorLexico:
                             lexema += str(self.arquivoLinhas[linha])
                     lexema = re.sub(' +',' ',lexema) #Expressão regular para tirar excesso de espaços
                     self.geraToken(self.literal["string_literal"], lexema)
-                    continue
+                    continue'''
                     
                         
                         
@@ -372,3 +374,13 @@ class AnalisadorLexico:
         for token in self.fluxoDeTokens:
             fluxoDeTokens.write(token.toString()+", ")
         fluxoDeTokens.close()
+    
+    def imprimeTabelaDeToken(self):
+        tabelaDeTokens = open("tabelaDeTokens",'w')
+        t = PrettyTable(['Lexema', 'Linha', 'Coluna', 'Tipo do Token'])
+        for indice in self.fluxoDeToken:
+            t.add_row([str(indice), str(self.tabelaDeSimbolos[indice])])
+            #tabelaDeSimbolos.write("|" + str(indice) + "|" + str(self.tabelaDeSimbolos[indice] + "| \n"))
+        tabelaDeSimbolos.write(str(t))
+        tabelaDeSimbolos.close()
+        
