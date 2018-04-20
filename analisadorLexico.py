@@ -140,8 +140,12 @@ class AnalisadorLexico:
                         self.geraToken(self.literal["string_literal"], lexema)
                         continue
                     
+                    error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico", "não e char literal")
+                    
+                    
+                    
                     #Se chegar aqui, é pq é uma string multilinhas
-                    for linha in range(indiceIniLinha, indiceFinalLinha+1):
+                    '''for linha in range(indiceIniLinha, indiceFinalLinha+1):
                         #Se é a primeira linha, pega da coluna inicial até o final da linha
                         if(linha == indiceIniLinha):
                             lexema += self.arquivoLinhas[linha][indiceIniColuna: len(self.arquivoLinhas[linha])]
@@ -153,7 +157,7 @@ class AnalisadorLexico:
                             lexema += str(self.arquivoLinhas[linha])
                     lexema = re.sub(' +',' ',lexema) #Expressão regular para tirar excesso de espaços
                     self.geraToken(self.literal["string_literal"], lexema)
-                    continue
+                    continue'''
                     
                         
                         
@@ -178,12 +182,12 @@ class AnalisadorLexico:
                                         continue
                                         
                                     else: # c3 é diferente de aspas simples (')
-                                        error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal")
+                                        error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico", "não e char literal")
                                         
                                 else: # c2 é diferente '\n' '\r' '\t' '\b' '\f' '\’' '\"' '\\'
-                                    error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal")
+                                    error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico", "não e char literal")
                             else:
-                                error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal, fim de linha")
+                                error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico", "não e char literal, fim de linha")
                         elif c1 != '\'' and c1 != '\\':
                             if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 2):
                                 c2 = self.arquivoLinhas[indiceLinha][indiceColuna + 2]
@@ -193,12 +197,12 @@ class AnalisadorLexico:
                                     continue
                                     
                                 else: # c2 é diferente de aspas simples (')
-                                    error = Error(indiceLinha, indiceColuna, "lexico",  "não e char literal")
+                                    error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico",  "não e char literal")
                                 
                         else: # c1 for igual a aspas simples (') ou igual uma barra(\)
-                            error = Error(indiceLinha, indiceColuna, "lexico",  "não e char literal")
+                            error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico",  "não e char literal")
                     else:
-                        error = Error(indiceLinha, indiceColuna, "lexico", "não e char literal, fim de linha")
+                        error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico", "não e char literal, fim de linha")
                 #-------------------------------------------------------------
                 
                 
@@ -235,7 +239,7 @@ class AnalisadorLexico:
                                 indiceColuna += 1
                                 continue
                             else: # Caso proximo ao zero  nao seja caracter valido
-                                error = Error(indiceLinha, indiceColuna, "lexico",  "Numero Invalido")
+                                error = Error(indiceLinha, indiceColuna, self.arquivoLinhas, self.operador, self.separador, "lexico",  "Numero Invalido")
                         else:
                             self.geraToken(self.literal["int_literal"], caractere)
                     else:
@@ -311,7 +315,7 @@ class AnalisadorLexico:
                 #-------------------------------------------------------------
                 #testa se é um caractere inválido (v)
                 if caractere not in self.caracteresDaLinguagem:
-                    error = Error(indiceLinha, indiceColuna, "lexico",  "caractere não pertence a linguagem")
+                    error = Error(indiceLinha, indiceColuna , self.arquivoLinhas, self.operador, self.separador, "lexico",  "caractere não pertence a linguagem")
                 #-------------------------------------------------------------
                 indiceColuna += 1
                 

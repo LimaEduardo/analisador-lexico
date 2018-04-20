@@ -2,7 +2,6 @@ package pass;
 //instanceof
 //222
 //int
-
 import java.lang.Integer;
 
 import java.lang.System;
@@ -11,21 +10,19 @@ public class Series {
     public static int ARITHMETIC = 1; // comentario char nois 
     
     System.out.println("Este é uma string entre duas aspas")
-    System.out.println("Este é uma string entre duas aspas
-    que quebra não apenas uma linha
-    mas sim duas")
+    
     
     public static int GEOMETRIC = 2123; // int a b c 1 2 3
     
-    private int a;
-    private int d;
-    private int n;
+    private int ad@zz;
+    private int d%%;
+    private int n%%;
     
     public Series() {
-        this(1, 1, 10);
+        this(1, 1%, 10);
     }
     
-    public Series(int a, int d, int n) {
+    public Series(i%nt a, int d, int n) {
         this.a = a;
         this.d = d;
         this.n = n;
