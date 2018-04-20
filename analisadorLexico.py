@@ -137,11 +137,13 @@ class AnalisadorLexico:
                     #Se o indice final é igual ao inicial, quer dizer que a string está em uma só linha
                     if indiceIniLinha == indiceFinalLinha:
                         lexema = self.arquivoLinhas[indiceFinalLinha][indiceIniColuna: indiceFinalColuna]
-                        self.geraToken(self.literal["string_literal"], lexema)
+                        self.geraToken(self.literal["string_literal"], lexema, indiceFinalLinha, indiceFinalColuna)
                         continue
                     
+                    error = Error(indiceLinha, indiceColuna, "lexico",  "Quebra de linha dentro de uma string")
+                    
                     #Se chegar aqui, é pq é uma string multilinhas
-                    for linha in range(indiceIniLinha, indiceFinalLinha+1):
+                    '''for linha in range(indiceIniLinha, indiceFinalLinha+1):
                         #Se é a primeira linha, pega da coluna inicial até o final da linha
                         if(linha == indiceIniLinha):
                             lexema += self.arquivoLinhas[linha][indiceIniColuna: len(self.arquivoLinhas[linha])]
@@ -153,7 +155,7 @@ class AnalisadorLexico:
                             lexema += str(self.arquivoLinhas[linha])
                     lexema = re.sub(' +',' ',lexema) #Expressão regular para tirar excesso de espaços
                     self.geraToken(self.literal["string_literal"], lexema)
-                    continue
+                    continue'''
                     
                         
                         
@@ -173,7 +175,7 @@ class AnalisadorLexico:
                                 c2 = self.arquivoLinhas[indiceLinha][indiceColuna + 2]
                                 if  c2 == 'n' or c2 == 'r' or c2 == 't' or c2 == 'b' or c2 == 'f' or c2 == '\'' or c2 == '\"' or c2 == '\\' :
                                     if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 3) and self.arquivoLinhas[indiceLinha][indiceColuna + 3] == '\'':
-                                        self.geraToken(self.literal["char_literal"], caractere+c1+c2+c3)
+                                        self.geraToken(self.literal["char_literal"], caractere+c1+c2+c3, indiceLinha, indiceColuna + 2)
                                         indiceColuna += 3
                                         continue
                                         
@@ -188,7 +190,7 @@ class AnalisadorLexico:
                             if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 2):
                                 c2 = self.arquivoLinhas[indiceLinha][indiceColuna + 2]
                                 if c2 == '\'':
-                                    self.geraToken(self.literal["char_literal"], caractere+c1+c2)
+                                    self.geraToken(self.literal["char_literal"], caractere+c1+c2, indiceLinha, indiceColuna +1)
                                     indiceColuna += 2
                                     continue
                                     
@@ -215,10 +217,10 @@ class AnalisadorLexico:
                     
                     lexema = self.arquivoLinhas[indiceLinha][iniLexema: (indiceColuna)]
                     if lexema not in self.reservada:  
-                        self.geraToken(self.literal["variavel_literal"], lexema)
+                        self.geraToken(self.literal["variavel_literal"], lexema, indiceLinha, iniLexema)
                         continue
                     else:
-                        self.geraToken(self.reservada[lexema], lexema)
+                        self.geraToken(self.reservada[lexema], lexema, indiceLinha, iniLexema)
                         continue
                 #-------------------------------------------------------------
                 
@@ -231,13 +233,13 @@ class AnalisadorLexico:
                             c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
                             
                             if((c1 == " ") or (self.ehOperador(caractere, c1)) or (c1 in self.separador) or (c1 == "\t") and (c1 == "\n")):
-                                self.geraToken(self.literal["int_literal"], caractere)
+                                self.geraToken(self.literal["int_literal"], caractere, indiceLinha, iniLexema)
                                 indiceColuna += 1
                                 continue
                             else: # Caso proximo ao zero  nao seja caracter valido
                                 error = Error(indiceLinha, indiceColuna, "lexico",  "Numero Invalido")
                         else:
-                            self.geraToken(self.literal["int_literal"], caractere)
+                            self.geraToken(self.literal["int_literal"], caractere, indiceLinha, iniLexema)
                     else:
                         while self.ehNumero(caractere):
                             indiceColuna += 1
@@ -246,7 +248,7 @@ class AnalisadorLexico:
                             else:
                                 caractere = None
                         lexema = self.arquivoLinhas[indiceLinha][iniLexema:indiceColuna]
-                        self.geraToken(self.literal["int_literal"], lexema)
+                        self.geraToken(self.literal["int_literal"], lexema, indiceLinha, iniLexema)
                         continue
                 #-------------------------------------------------------------
 
@@ -289,11 +291,11 @@ class AnalisadorLexico:
                 
                     # Criando os tokens de um operador
                     if ehOperadorUni:
-                        self.geraToken(self.operador[caractere], caractere)
+                        self.geraToken(self.operador[caractere], caractere, indiceLinha, indiceColuna)
                         indiceColuna += 1
                         continue
                     elif ehOperadorDup:
-                        self.geraToken(self.operador[caractere+c1], caractere+c1)
+                        self.geraToken(self.operador[caractere+c1], caractere+c1, indiceLinha, indiceColuna)
                         indiceColuna += 2
                         continue
                 #-------------------------------------------------------------
@@ -302,7 +304,7 @@ class AnalisadorLexico:
                 #-------------------------------------------------------------
                 #testa se caractere é um separador (v)
                 if caractere in self.separador:
-                    self.geraToken(self.separador[caractere], caractere)
+                    self.geraToken(self.separador[caractere], caractere, indiceLinha, indiceColuna)
                     indiceColuna += 1
                     continue
                 #-------------------------------------------------------------
@@ -332,7 +334,7 @@ class AnalisadorLexico:
         except:
             return False
 
-    def geraToken(self, tipoToken, lexema):
+    def geraToken(self, tipoToken, lexema, linha, coluna):
         # Se é um desses tipos, deverá ser registrado na tabela de simbolos
         if tipoToken == self.literal["int_literal"] or tipoToken == self.literal["char_literal"] or tipoToken == self.literal["string_literal"] or tipoToken == self.literal["variavel_literal"]:
             #print (lexema, tipoToken)
@@ -342,18 +344,18 @@ class AnalisadorLexico:
                 #Insere o token na tabela de simbolos, cria o token e adiciona nno fluxo de tokens
                 index = len(self.tabelaDeSimbolos)
                 self.tabelaDeSimbolos[index] = lexema
-                token = Token(tipoToken, lexema, index)
+                token = Token(tipoToken, lexema, linha, coluna, index)
                 self.fluxoDeTokens.append(token)
                 return
             else:
                 #Se o token já existe, precisamos então ver com é o indice dele para inserir no fluxo de tokens
                 index = [chave for chave in self.tabelaDeSimbolos if self.tabelaDeSimbolos[chave] == lexema][0] # <- é gambiarra, mas funciona.
-                token = Token(tipoToken, lexema, index)
+                token = Token(tipoToken, lexema, linha, coluna, index)
                 self.fluxoDeTokens.append(token)
                 return
         else:
             # Se o lexema não for de um tipo que requer um tipo, então é só inserir este no fluxo de tokens
-            token = Token(tipoToken, lexema)
+            token = Token(tipoToken, lexema, linha, coluna)
             self.fluxoDeTokens.append(token)
             return
             
@@ -372,3 +374,13 @@ class AnalisadorLexico:
         for token in self.fluxoDeTokens:
             fluxoDeTokens.write(token.toString()+", ")
         fluxoDeTokens.close()
+    
+    def imprimeTabelaDeToken(self):
+        tabelaDeTokens = open("tabelaDeTokens",'w')
+        t = PrettyTable(['Lexema', 'Linha', 'Coluna', 'Tipo do Token'])
+        for token in self.fluxoDeTokens:
+            t.add_row([str(token.getLexema()), str(token.getLinha()), str(token.getColuna()), str(token.getTipo())])
+            #tabelaDeSimbolos.write("|" + str(indice) + "|" + str(self.tabelaDeSimbolos[indice] + "| \n"))
+        tabelaDeTokens.write(str(t))
+        tabelaDeTokens.close()
+        

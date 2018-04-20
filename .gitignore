@@ -5,6 +5,7 @@ settings.json
 __pychace__/
 fluxoDeTokens
 tabelaDeSimbolos
+tabelaDeTokens
 *.swp
 .Rhistory
 
