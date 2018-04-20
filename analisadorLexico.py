@@ -17,8 +17,26 @@ class AnalisadorLexico:
         self.separador = {",": TipoToken.SepVirgula, "." : TipoToken.SepPonto, "[" : TipoToken.SepAbreColchete, "{" : TipoToken.SepAbreChave, "(" : TipoToken.SepAbreParentese, ")" : TipoToken.SepFechaParentese,"}" : TipoToken.SepFechaChave, "]" : TipoToken.SepFechaColchete, ";" : TipoToken.SepPontoEVirgula}
         self.reservada = {"abstract": TipoToken.PCAbstract, "boolean" : TipoToken.PCBoolean, "char" : TipoToken.PCChar, "class" : TipoToken.PCClass, "else" : TipoToken.PCElse ,"extends" : TipoToken.PCExtends ,"false" : TipoToken.PCFalse, "import" : TipoToken.PCImport, "if": TipoToken.PCIf ,"instanceof" : TipoToken.PCInstanceOf, "int" : TipoToken.PCInt, "new" : TipoToken.PCNew, "null" : TipoToken.PCNull, "package" : TipoToken.PCPackage, "private" : TipoToken.PCPrivate, "protected": TipoToken.PCProtected ,"public" : TipoToken.PCPublic, "return" : TipoToken.PCReturn, "static" : TipoToken.PCStatic, "super" : TipoToken.PCSuper, "this" : TipoToken.PCThis, "true" : TipoToken.PCTrue, "void" : TipoToken.PCVoid, "while" : TipoToken.PCWhile}
         self.literal = {"int_literal": TipoToken.Int, "char_literal": TipoToken.Char, "string_literal": TipoToken.String, "variavel_literal": TipoToken.Variavel}
+        self.caracteresDaLinguagem = self.listaCaracteres()
         self.comentario = False
         self.string = False
+    
+    def listaCaracteres(self):
+        lista = []
+        for i in range(ord('a'),ord('z') + 1):
+            lista.append(chr(i))
+        for i in range(ord('A'),ord('Z') + 1):
+            lista.append(chr(i))
+        for i in range(0,10):
+            lista.append(i)
+        for operador in self.operador:
+            lista.append(operador)
+        for separador in self.separador:
+            lista.append(separador)
+        especiais = ['_','$', '\n', '\r', '\t','\b','\f','\'', '"','\\',' ']
+        for especial in especiais:
+            lista.append(especial)
+        return lista
     
     
     def ehCharIdentificador(self,c):
@@ -59,7 +77,6 @@ class AnalisadorLexico:
             return True
         else:
             return False
-        
     
     def analisa(self):
         iniLexema = 0
@@ -288,8 +305,13 @@ class AnalisadorLexico:
                     self.geraToken(self.separador[caractere], caractere)
                     indiceColuna += 1
                     continue
-                #else:
-                 #   error = Error(indiceLinha, indiceColuna, "lexico",  "erro final")
+                #-------------------------------------------------------------
+                
+                
+                #-------------------------------------------------------------
+                #testa se é um caractere inválido (v)
+                if caractere not in self.caracteresDaLinguagem:
+                    error = Error(indiceLinha, indiceColuna, "lexico",  "caractere não pertence a linguagem")
                 #-------------------------------------------------------------
                 indiceColuna += 1
                 
