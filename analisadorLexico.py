@@ -82,6 +82,69 @@ class AnalisadorLexico:
                 #-------------------------------------------------------------
                 
                 #-------------------------------------------------------------
+                # Testa se é uma string Literal (v)
+                
+                # Verifica se o primeiro char é uma aspas duplas
+                if caractere == '"':
+                    #guarda os indices iniciais
+                    indiceIniColuna = indiceColuna
+                    indiceIniLinha = indiceLinha
+                    
+                    #Se o proximo indice for válido, ande nele.
+                    # Se não, provavelmente chegou em um fim de linha, então vá para a proxima linha
+                    if self.ehIndiceValidoCol(indiceLinha, indiceColuna+1):
+                        indiceColuna += 1
+                        c = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
+                    else:
+                        indiceLinha += 1
+                        indiceColuna = 0
+                        c = self.arquivoLinhas[indiceLinha][indiceColuna]
+                        
+                    #Enquanto não achar outras aspas duplas (fechamento) percorra
+                    while c != '"':
+                        #Se o proximo indice é valido, ande no arquivo
+                        #Se o proximo indice não é valido, pule a linha
+                        if self.ehIndiceValidoCol(indiceLinha, indiceColuna):
+                            c = self.arquivoLinhas[indiceLinha][indiceColuna]
+                        else:
+                            indiceColuna = 0
+                            indiceLinha += 1
+                            c = self.arquivoLinhas[indiceLinha][indiceColuna]
+                        indiceColuna += 1
+                    #Inicio da montagem do lexema
+                    lexema = ""
+                    # guarda os indices finais
+                    indiceFinalColuna = indiceColuna
+                    indiceFinalLinha = indiceLinha
+                    
+                    #Se o indice final é igual ao inicial, quer dizer que a string está em uma só linha
+                    if indiceIniLinha == indiceFinalLinha:
+                        lexema = self.arquivoLinhas[indiceFinalLinha][indiceIniColuna: indiceFinalColuna]
+                        self.geraToken(self.literal["string_literal"], lexema)
+                        continue
+                    
+                    #Se chegar aqui, é pq é uma string multilinhas
+                    for linha in range(indiceIniLinha, indiceFinalLinha+1):
+                        #Se é a primeira linha, pega da coluna inicial até o final da linha
+                        if(linha == indiceIniLinha):
+                            lexema += self.arquivoLinhas[linha][indiceIniColuna: len(self.arquivoLinhas[linha])]
+                        #Se é a ultima linha, pega da coluna 0 até a coluna final
+                        elif (linha == indiceFinalLinha):
+                            lexema += self.arquivoLinhas[linha][0: indiceFinalColuna]
+                        #Se não é final nem inicial, pega a linha toda
+                        else:
+                            lexema += str(self.arquivoLinhas[linha])
+                    lexema = re.sub(' +',' ',lexema) #Expressão regular para tirar excesso de espaços
+                    self.geraToken(self.literal["string_literal"], lexema)
+                    continue
+                    
+                        
+                        
+                #-------------------------------------------------------------
+                
+                
+                
+                #-------------------------------------------------------------
                 # Testa se é um char Literal (v)
                 
                 #if not ehCharLiteral and caractere == '\'':
