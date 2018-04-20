@@ -1,5 +1,5 @@
 # Analisador Léxico
-## Analisador léxico da linguagem Java-- desvenvolvido para a disciplina de Compiladores (GCC-130) na universidade federal de Lavras
+## Analisador léxico da linguagem Java-- desvenvolvido para a disciplina de Compiladores (GCC-130) na Universidade Federal de Lavras
 
 ---
 ## Rodando:
