@@ -16,3 +16,14 @@ Exemplo:
 python3 main.py exemplos/exemplos.jmm
 ```
 
+## Saída:
+
+A saída são três arquivos:
+
+
+* fluxoDeTokens -> Imprime os tokens na ordem em que foram gerados no arquivo
+
+* tabelaDeTokens -> Imprime o fluxo de tokens em forma de tabela indicando a linha e a coluna.
+
+* tabelaDeSimbolos -> Indica o indice e o lexema de um simbolo da linguagem
+
