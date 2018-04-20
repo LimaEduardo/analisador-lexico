@@ -15,3 +15,4 @@ if __name__ == "__main__":
     analisador.analisa()
     analisador.imprimeFluxoDeTokens()
     analisador.imprimeTabelaDeSimbolos()
+    analisador.imprimeTabelaDeToken()
