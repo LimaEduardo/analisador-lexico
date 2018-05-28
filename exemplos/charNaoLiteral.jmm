@@ -1,19 +1,14 @@
-package pass;
-//instanceof
-//222
-//int
-
 import java.lang.Integer;
 
 import java.lang.System;
 
 public class Series {
-    public static int ARITHMETIC = 1; // comentario char nois 
+    public static int ARITHMETIC = 1; // comentario
     
     System.out.println("Este é uma string entre duas aspas")
-    System.out.println("Este é uma string entre duas aspas
-    que quebra não apenas uma linha
-    mas sim duas")
+    //System.out.println("Este é uma string entre duas aspas
+    //que quebra não apenas uma linha
+    //mas sim duas")
     
     public static int GEOMETRIC = 2123; // int a b c 1 2 3
     
@@ -31,7 +26,7 @@ public class Series {
         this.n = n;
     }
     
-    public int computeSum(int kind) {
+    public int 1computeSum(int kind) {
         int sum = a, t = a, i = n;
         while (i-- > 1) {
         if (kind == ARITHMETIC) {

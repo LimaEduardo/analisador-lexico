@@ -13,6 +13,7 @@ class AnalisadorLexico:
         self.arquivoLinhas = self.arquivo.linhasArquivo
         self.fluxoDeTokens = []
         self.tabelaDeSimbolos = {}
+                        #Operadores:  = == > ++ && <= ! - -- + += *
         self.operador = {"=": TipoToken.OPRecebe , "==" : TipoToken.OPIgual, ">": TipoToken.OPMaior, "++" : TipoToken.OPIncrementa, "&&" : TipoToken.OPAnd, "<=" : TipoToken.OPMenorIgual, "!" : TipoToken.OPNao, "-" : TipoToken.OPMenos, "--" : TipoToken.OPDecrementa, "+" : TipoToken.OPSoma, "+=" : TipoToken.OPSomaERecebe, "*": TipoToken.OpMultiplica }
         self.separador = {",": TipoToken.SepVirgula, "." : TipoToken.SepPonto, "[" : TipoToken.SepAbreColchete, "{" : TipoToken.SepAbreChave, "(" : TipoToken.SepAbreParentese, ")" : TipoToken.SepFechaParentese,"}" : TipoToken.SepFechaChave, "]" : TipoToken.SepFechaColchete, ";" : TipoToken.SepPontoEVirgula}
         self.reservada = {"abstract": TipoToken.PCAbstract, "boolean" : TipoToken.PCBoolean, "char" : TipoToken.PCChar, "class" : TipoToken.PCClass, "else" : TipoToken.PCElse ,"extends" : TipoToken.PCExtends ,"false" : TipoToken.PCFalse, "import" : TipoToken.PCImport, "if": TipoToken.PCIf ,"instanceof" : TipoToken.PCInstanceOf, "int" : TipoToken.PCInt, "new" : TipoToken.PCNew, "null" : TipoToken.PCNull, "package" : TipoToken.PCPackage, "private" : TipoToken.PCPrivate, "protected": TipoToken.PCProtected ,"public" : TipoToken.PCPublic, "return" : TipoToken.PCReturn, "static" : TipoToken.PCStatic, "super" : TipoToken.PCSuper, "this" : TipoToken.PCThis, "true" : TipoToken.PCTrue, "void" : TipoToken.PCVoid, "while" : TipoToken.PCWhile}
@@ -47,27 +48,15 @@ class AnalisadorLexico:
             
     def ehNumero(self,c):
         return c.isdigit()
-    
-    def ehOperador(self, c, c1):
-        if c == '=':
-            if c1 == '=':
-                return True
-        elif c == '+':
-            if c1 == '+':
-                return True
-        elif c == '&':
-            if c1 == '&':
-                return True
-        elif c == '<':
-            if c1 == '=':
-                return True
-        elif c == '-':
-            if c1 == '-':
-                return True
-        elif c == '+':
-            if c1 == '=':
-                return True
-        elif c in self.operador:
+                                        # Unitario:  = > ! - + * 
+    def possivelOperador(self, c):      # Dup     :  == ++ += && <= --
+        if c == '&' or c == '<' or c in self.operador:
+            return True
+        else:
+            return False
+            
+    def possivelIdentificador(self, c):
+        if (self.ehCharIdentificador(c)) or (self.ehNumero(c)) or (c == '_') or (c == '$'):
             return True
         else:
             return False
@@ -209,13 +198,25 @@ class AnalisadorLexico:
                 # Teste se achou um identificador (v)
                 if self.ehCharIdentificador(caractere):
                     iniLexema = indiceColuna
-                    #while ((c != " ") and (not ehOperador(c)) and (c not in self.separador) and (c != "\t") and (c != "\n")):
-                    while ((self.ehCharIdentificador(caractere)) or (self.ehNumero(caractere)) or (caractere == '_') or (caractere == '$')): 
+                    print(caractere)
+                    if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
                         indiceColuna += 1
                         caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
+                        print(caractere)
+                        fimIdent = False
+                        while (not fimIdent) and (self.possivelIdentificador(caractere)):
+                            indiceColuna += 1
+                            if self.ehIndiceValidoCol(indiceLinha, indiceColuna):
+                                caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
+                            else:
+                                fimIdent = True
+                                
+                    else: # Para ultilizar esse metodo [ inicio : fim ] precisa ir ate o indice invalido caso necessario
+                        indiceColuna += 1
                     
+                    lexema = self.arquivoLinhas[indiceLinha][iniLexema : indiceColuna]
+                        
                     
-                    lexema = self.arquivoLinhas[indiceLinha][iniLexema: (indiceColuna)]
                     if lexema not in self.reservada:  
                         self.geraToken(self.literal["variavel_literal"], lexema, indiceLinha, iniLexema)
                         continue
@@ -259,10 +260,12 @@ class AnalisadorLexico:
                 
                 ehOperadorUni = False
                 ehOperadorDup = False
-                
-                if caractere in self.operador:
-                    ehOperadorUni = True
-                    
+                                                    # Unitario:  = > ! - + * 
+                                                    # Dup     :  == ++ += && <= --
+                if self.possivelOperador(caractere):
+                    if caractere in self.operador:
+                        ehOperadorUni = True
+                        
                     if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
                         c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1] 
                         if caractere == '=':
@@ -288,16 +291,16 @@ class AnalisadorLexico:
                             if c1 == '-':
                                 ehOperadorDup = True
                                 ehOperadorUni = False
-                
-                    # Criando os tokens de um operador
-                    if ehOperadorUni:
-                        self.geraToken(self.operador[caractere], caractere, indiceLinha, indiceColuna)
-                        indiceColuna += 1
-                        continue
-                    elif ehOperadorDup:
-                        self.geraToken(self.operador[caractere+c1], caractere+c1, indiceLinha, indiceColuna)
-                        indiceColuna += 2
-                        continue
+                    
+                        # Criando os tokens de um operador
+                        if ehOperadorDup:
+                            self.geraToken(self.operador[caractere+c1], caractere+c1, indiceLinha, indiceColuna)
+                            indiceColuna += 2
+                            continue
+                        elif ehOperadorUni:
+                            self.geraToken(self.operador[caractere], caractere, indiceLinha, indiceColuna)
+                            indiceColuna += 1
+                            continue
                 #-------------------------------------------------------------
                 
                 

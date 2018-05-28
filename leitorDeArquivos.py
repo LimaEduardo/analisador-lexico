@@ -14,7 +14,7 @@ class LeitorDeArquivos:
             self.linhasArquivo = arquivo.read().splitlines()
             arquivo.close()
         else:
-            print("Não existe")
+            print("Arquivo nao existe")
             sys.exit()
     
     # def leProximoChar(self):

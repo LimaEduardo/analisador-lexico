@@ -1,14 +1,9 @@
-package pass;
-//instanceof
-//222
-//int
-
 import java.lang.Integer;
 
 import java.lang.System;
 
 public class Series {
-    public static int ARITHMETIC = 1; // comentario char nois 
+    public static int ARITHMETIC = 1; // comentario
     
     System.out.println("Este é uma string entre duas aspas")
     System.out.println("Este é uma string entre duas aspas

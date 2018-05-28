@@ -1,23 +1,18 @@
-package pass;
-//instanceof
-//222
-//int
-
 import java.lang.Integer;
 
 import java.lang.System;
 
 public class Series {
-    public static int ARITHMETIC = 1; // comentario char nois 
+    public static int ARITHMETIC = 1; // comentario
     
     System.out.println("Este é uma string entre duas aspas")
-    System.out.println("Este é uma string entre duas aspas
-    que quebra não apenas uma linha
-    mas sim duas")
+    //System.out.println("Este é uma string entre duas aspas
+    //que quebra não apenas uma linha
+    //mas sim duas")
     
     public static int GEOMETRIC = 2123; // int a b c 1 2 3
     
-    private int a;
+    private int 1a;
     private int d;
     private int n;
     
