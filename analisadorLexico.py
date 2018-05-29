@@ -30,6 +30,7 @@ class AnalisadorLexico:
             lista.append(chr(i))
         for i in range(0,10):
             lista.append(i)
+            lista.append(str(i))
         for operador in self.operador:
             lista.append(operador)
         for separador in self.separador:
@@ -198,11 +199,11 @@ class AnalisadorLexico:
                 # Teste se achou um identificador (v)
                 if self.ehCharIdentificador(caractere):
                     iniLexema = indiceColuna
-                    print(caractere)
+                    #~ print(caractere)
                     if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
                         indiceColuna += 1
                         caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
-                        print(caractere)
+                        #~ print(caractere)
                         fimIdent = False
                         while (not fimIdent) and (self.possivelIdentificador(caractere)):
                             indiceColuna += 1
@@ -215,7 +216,6 @@ class AnalisadorLexico:
                         indiceColuna += 1
                     
                     lexema = self.arquivoLinhas[indiceLinha][iniLexema : indiceColuna]
-                        
                     
                     if lexema not in self.reservada:  
                         self.geraToken(self.literal["variavel_literal"], lexema, indiceLinha, iniLexema)
@@ -228,29 +228,35 @@ class AnalisadorLexico:
                 #-------------------------------------------------------------
                 # Teste se é um numero (v)
                 if self.ehNumero(caractere):
-                    iniLexema = indiceColuna
-                    if caractere == "0":
+                    if caractere == '0':
                         if self.ehIndiceValidoCol(indiceLinha, indiceColuna + 1):
                             c1 = self.arquivoLinhas[indiceLinha][indiceColuna + 1]
                             
-                            if((c1 == " ") or (self.ehOperador(caractere, c1)) or (c1 in self.separador) or (c1 == "\t") and (c1 == "\n")):
+                            if(c1 == " ") or (self.possivelOperador(c1)) or (c1 in self.separador) or (c1 == "\t"):
                                 self.geraToken(self.literal["int_literal"], caractere, indiceLinha, iniLexema)
                                 indiceColuna += 1
                                 continue
-                            else: # Caso proximo ao zero  nao seja caracter valido
+                            elif self.ehNumero(c1) : # Caso proximo ao zero  nao seja caracter valido
                                 error = Error(indiceLinha, indiceColuna, "lexico",  "Numero Invalido")
+                            elif self.possivelIdentificador(c1):
+                                error = Error(indiceLinha, indiceColuna, "lexico",  "Variavel Invalida")
                         else:
                             self.geraToken(self.literal["int_literal"], caractere, indiceLinha, iniLexema)
                     else:
-                        while self.ehNumero(caractere):
+                        iniLexema = indiceColuna
+                        while caractere != None and self.ehNumero(caractere):
                             indiceColuna += 1
                             if self.ehIndiceValidoCol(indiceLinha, indiceColuna):
                                 caractere = self.arquivoLinhas[indiceLinha][indiceColuna]
                             else:
                                 caractere = None
-                        lexema = self.arquivoLinhas[indiceLinha][iniLexema:indiceColuna]
-                        self.geraToken(self.literal["int_literal"], lexema, indiceLinha, iniLexema)
-                        continue
+                        if caractere != None and self.possivelIdentificador(caractere):
+                            error = Error(indiceLinha, iniLexema, "lexico",  "Variavel Invalida")
+                        else:
+                            lexema = self.arquivoLinhas[indiceLinha][iniLexema:indiceColuna]
+                            self.geraToken(self.literal["int_literal"], lexema, indiceLinha, iniLexema)
+                            continue
+                            
                 #-------------------------------------------------------------
 
 
@@ -314,7 +320,7 @@ class AnalisadorLexico:
                 
                 
                 #-------------------------------------------------------------
-                #testa se é um caractere inválido (v)
+                # testa se é um caractere inválido (v)
                 if caractere not in self.caracteresDaLinguagem:
                     error = Error(indiceLinha, indiceColuna, "lexico",  "caractere não pertence a linguagem")
                 #-------------------------------------------------------------

@@ -26,7 +26,7 @@ public class Series {
         this.n = n;
     }
     
-    public int 1computeSum(int kind) {
+    public int computeSum(int kind) {
         int sum = a, t = a, i = n;
         while (i-- > 1) {
         if (kind == ARITHMETIC) {
