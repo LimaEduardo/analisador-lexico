@@ -42,7 +42,7 @@ class AnalisadorLexico:
     
     
     def ehCharIdentificador(self,c):
-        if ((ord('a') <= ord(c)) and (ord(c) <= ord('z'))) or ((ord('A') <= ord(c)) and (ord(c) <= ord('Z'))) or c == '_' or c == '\$':
+        if ((ord('a') <= ord(c)) and (ord(c) <= ord('z'))) or ((ord('A') <= ord(c)) and (ord(c) <= ord('Z'))) or c == '_' or c == '$':
             return True
         else:
             return False
